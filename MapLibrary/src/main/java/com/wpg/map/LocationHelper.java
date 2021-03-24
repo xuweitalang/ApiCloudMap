@@ -1,7 +1,11 @@
 package com.wpg.map;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.os.Build;
+import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -13,12 +17,16 @@ import com.baidu.location.BDAbstractLocationListener;
 import com.baidu.location.BDLocation;
 import com.baidu.location.LocationClient;
 import com.baidu.location.LocationClientOption;
+import com.baidu.platform.comapi.util.JsonBuilder;
+import com.google.gson.Gson;
 import com.uzmap.pkg.uzcore.UZWebView;
 import com.uzmap.pkg.uzcore.uzmodule.UZModule;
 import com.uzmap.pkg.uzcore.uzmodule.UZModuleContext;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.json.JSONStringer;
 
 /**
  * @Author: xuwei
@@ -42,7 +50,13 @@ public class LocationHelper extends UZModule {
     }
 
     public void jsmethod_startTestActivity(final UZModuleContext moduleContext) {
-        startActivity(new Intent(context(), TestActivity.class));
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (context().checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                startActivity(new Intent(context(), TestActivity.class));
+            } else {
+                Toast.makeText(context(), "权限已开启", Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 
     /**
@@ -58,10 +72,33 @@ public class LocationHelper extends UZModule {
 
         int type = moduleContext.optInt("type", 0);
 //        if (type == 0) {
-//        initBDMap(context());
+        initBDMap(context());
 //        } else {
-        initGDMap(context());
+//        initGDMap(context());
 //        }
+    }
+
+
+    /**
+     * 调用百度定位
+     *
+     * @param moduleContext
+     */
+    public void jsmethod_initBD(final UZModuleContext moduleContext) {
+        //获取前端传过来的地图类型：假设0为百度地图，1为高德地图
+        mJsCallback = moduleContext;
+        initBDMap(context());
+    }
+
+    /**
+     * 调用高德定位
+     *
+     * @param moduleContext
+     */
+    public void jsmethod_initGD(final UZModuleContext moduleContext) {
+        //获取前端传过来的地图类型：假设0为百度地图，1为高德地图
+        mJsCallback = moduleContext;
+        initGDMap(context());
     }
 
     /**
@@ -174,18 +211,15 @@ public class LocationHelper extends UZModule {
 //            location.getBuildingName();    //室内精准定位下，获取楼宇名称
 //            location.getFloor();    //室内精准定位下，获取当前位置所处的楼层信息
 
-            Log.d(TAG, "onReceiveLocation: " + location);
-            Log.d(TAG, "onReceiveLocation: " + "address:" + location.getAddrStr() + ",latitude = " + location.getLatitude() + ",longitude = " + location.getLongitude());
-            Toast.makeText(context(), "百度定位成功", Toast.LENGTH_SHORT).show();
             bdLocation = location;
             if (mJsCallback != null) {
                 JSONObject ret;
                 if (bdLocation != null) {
                     try {
-                        ret = new JSONObject(bdLocation.getAddrStr());
+                        ret = new JSONObject(new Gson().toJson(bdLocation));
                         mJsCallback.success(ret, true);
-                        Log.d(TAG, "mJsCallback: baidu====>" + location);
-                        mJsCallback = null;
+                        Log.d(TAG, "mJsCallback: baidu====>" + ret);
+                        Toast.makeText(context(), "百度定位成功:" + ret, Toast.LENGTH_SHORT).show();
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -249,14 +283,14 @@ public class LocationHelper extends UZModule {
                 //解析定位结果
                 String result = sb.toString();
                 Log.d(TAG, "onLocationChanged:gaode====> " + result);
-//                Toast.makeText(context(), "高德定位成功", Toast.LENGTH_SHORT).show();
 
                 if (mJsCallback != null) {
                     JSONObject ret;
                     try {
-                        ret = new JSONObject(location.getAddress());
+                        ret = new JSONObject(new Gson().toJson(location));
                         mJsCallback.success(ret, true);
-                        Log.d(TAG, "mJsCallback: gaode====>" + location);
+                        Log.d(TAG, "mJsCallback: gaode====>" + ret);
+                        Toast.makeText(context(), "高德定位成功:" + ret, Toast.LENGTH_SHORT).show();
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }

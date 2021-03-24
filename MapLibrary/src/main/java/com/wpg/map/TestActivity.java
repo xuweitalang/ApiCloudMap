@@ -1,6 +1,7 @@
 package com.wpg.map;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -15,7 +16,7 @@ import android.widget.Toast;
  * @Date: 2021/3/24 13:25
  * @Description:
  */
-public class TestActivity extends AppCompatActivity {
+public class TestActivity extends Activity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

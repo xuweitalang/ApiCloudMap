@@ -158,9 +158,19 @@
 		    mapModule.init();
 		}
 
+		function bdLocation() {
+		    mapModule.initBD();
+		}
+
+		function gdLocation() {
+		    mapModule.initGD();
+		}
+
 		function startTestActivity() {
 		    mapModule.startTestActivity();
 		}
+
+
 
 
     </script>
@@ -211,10 +221,10 @@
         <div class='itemtitle'>9、模块A自定义UI模块</div>
         <div class="clickbtn" tapmode="active" onclick="AMaddView()">添加自定义View到当前Window</div>
         <div class='itemtitle'>10、模块C启动Activity</div>
+        <div class="clickbtn" tapmode="active" onclick="startTestActivity()">开启定位权限</div>
+        <div class="clickbtn" tapmode="active" onclick="bdLocation()">百度定位</div>
+        <div class="clickbtn" tapmode="active" onclick="gdLocation()">高德定位</div>
         <div class="clickbtn" tapmode="active" onclick="testLocation()">定位</div>
-        <div class="clickbtn" tapmode="active" onclick="startTestActivity()">
-            startActivityForResult
-        </div>
         <br>
     </div>
 </div>
