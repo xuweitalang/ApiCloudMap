@@ -1,2 +1,3 @@
 rootProject.name='ApiCloudMap'
 include ':app'
+include ':MapLibrary'
