@@ -1,11 +1,10 @@
-package com.wpg.map;
+package com.wpg.map.location;
 
 import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
-import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -17,16 +16,13 @@ import com.baidu.location.BDAbstractLocationListener;
 import com.baidu.location.BDLocation;
 import com.baidu.location.LocationClient;
 import com.baidu.location.LocationClientOption;
-import com.baidu.platform.comapi.util.JsonBuilder;
 import com.google.gson.Gson;
 import com.uzmap.pkg.uzcore.UZWebView;
 import com.uzmap.pkg.uzcore.uzmodule.UZModule;
 import com.uzmap.pkg.uzcore.uzmodule.UZModuleContext;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.json.JSONStringer;
 
 /**
  * @Author: xuwei
@@ -35,6 +31,8 @@ import org.json.JSONStringer;
  */
 public class LocationHelper extends UZModule {
     private static final String TAG = "LocationHelper";
+    private static final String TYPE_BD = "'bmap";
+    private static final String TYPE_GD = "amap";
     public LocationClient mBDLocationClient = null;
     private BDAbstractLocationListener myBDListener = new MyLocationListener();
     private BDLocation bdLocation;
@@ -70,14 +68,13 @@ public class LocationHelper extends UZModule {
         //获取前端传过来的地图类型：假设0为百度地图，1为高德地图
         mJsCallback = moduleContext;
 
-        int type = moduleContext.optInt("type", 0);
-//        if (type == 0) {
-        initBDMap(context());
-//        } else {
-//        initGDMap(context());
-//        }
+        String type = moduleContext.optString("mapType", TYPE_BD);
+        if (TYPE_GD.equals(type)) {
+            initGDMap(context());
+        } else {
+            initBDMap(context());
+        }
     }
-
 
     /**
      * 调用百度定位

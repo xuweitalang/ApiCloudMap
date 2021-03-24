@@ -1,4 +1,4 @@
-package com.wpg.map;
+package com.wpg.map.location;
 
 import android.content.Context;
 

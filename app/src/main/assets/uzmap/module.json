@@ -2,11 +2,11 @@
   "modules": [
     {
       "name": "mapModule",
-      "class": "com.wpg.map.LocationHelper"
+      "class": "com.wpg.map.location.LocationHelper"
     },
     {
       "name": "mapDelegate",
-      "class": "com.wpg.map.MapDelegate"
+      "class": "com.wpg.map.location.MapDelegate"
     }
   ]
 }

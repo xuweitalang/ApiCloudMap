@@ -16,6 +16,21 @@ android {
         minSdkVersion 19
     }
 
+    signingConfigs {
+        debug {
+            storeFile file("../keystore/map.jks")
+            storePassword "123456"
+            keyAlias "key0"
+            keyPassword "123456"
+        }
+        release {
+            storeFile file("../keystore/map.jks")
+            storePassword "123456"
+            keyAlias "key0"
+            keyPassword "123456"
+        }
+    }
+
     lintOptions {
         abortOnError false
         checkReleaseBuilds false
@@ -47,7 +62,6 @@ repositories {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation 'com.android.support:support-v4:26.0.0'
-    implementation 'com.android.support:multidex:1.0.1'
+    implementation 'com.android.support:multidex:1.0.3'
     implementation project(':MapLibrary')
 }

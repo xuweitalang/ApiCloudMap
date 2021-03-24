@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.wpg.map">
+    package="com.wpg.map.location">
 
     <application>
         <activity
-            android:name="com.wpg.map.TestActivity"
+            android:name="com.wpg.map.location.TestActivity"
             android:theme="@android:style/Theme.Translucent" />
     </application>
 </manifest>
