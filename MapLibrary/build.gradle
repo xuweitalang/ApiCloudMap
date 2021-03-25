@@ -49,5 +49,7 @@ dependencies {
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
     implementation 'com.google.code.gson:gson:2.8.6'
+    //高德定位
+    implementation 'com.amap.api:location:latest.integration'
     provided files('../app/libs/apiEngine v1.1.0.jar')
 }

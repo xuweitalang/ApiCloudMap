@@ -4,7 +4,7 @@
 
     <application>
         <activity
-            android:name="com.wpg.map.location.TestActivity"
+            android:name="com.wpg.map.location.PermissionActivity"
             android:theme="@android:style/Theme.Translucent" />
     </application>
 </manifest>

@@ -34,13 +34,8 @@ public class LocationHelper extends UZModule {
     private static final String TYPE_BD = "'bmap";
     private static final String TYPE_GD = "amap";
     public LocationClient mBDLocationClient = null;
-    private BDAbstractLocationListener myBDListener = new MyLocationListener();
-    private BDLocation bdLocation;
+    private final BDAbstractLocationListener myBDListener = new MyLocationListener();
     private UZModuleContext mJsCallback;
-
-    //声明AMapLocationClient类对象
-    private AMapLocationClient mGDLocationClient;
-    private AMapLocationClientOption mGDLocationOption;
 
     public LocationHelper(UZWebView webView) {
         super(webView);
@@ -50,7 +45,7 @@ public class LocationHelper extends UZModule {
     public void jsmethod_startTestActivity(final UZModuleContext moduleContext) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (context().checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                startActivity(new Intent(context(), TestActivity.class));
+                startActivity(new Intent(context(), PermissionActivity.class));
             } else {
                 Toast.makeText(context(), "权限已开启", Toast.LENGTH_SHORT).show();
             }
@@ -144,8 +139,9 @@ public class LocationHelper extends UZModule {
      */
     private void initGDMap(Context context) {
         //初始化client
-        mGDLocationClient = new AMapLocationClient(context.getApplicationContext());
-        mGDLocationOption = getDefaultOption();
+        //声明AMapLocationClient类对象
+        AMapLocationClient mGDLocationClient = new AMapLocationClient(context.getApplicationContext());
+        AMapLocationClientOption mGDLocationOption = getDefaultOption();
         //设置定位参数
         mGDLocationClient.setLocationOption(mGDLocationOption);
         // 设置定位监听
@@ -208,12 +204,11 @@ public class LocationHelper extends UZModule {
 //            location.getBuildingName();    //室内精准定位下，获取楼宇名称
 //            location.getFloor();    //室内精准定位下，获取当前位置所处的楼层信息
 
-            bdLocation = location;
             if (mJsCallback != null) {
                 JSONObject ret;
-                if (bdLocation != null) {
+                if (location != null) {
                     try {
-                        ret = new JSONObject(new Gson().toJson(bdLocation));
+                        ret = new JSONObject(new Gson().toJson(location));
                         mJsCallback.success(ret, true);
                         Log.d(TAG, "mJsCallback: baidu====>" + ret);
                         Toast.makeText(context(), "百度定位成功:" + ret, Toast.LENGTH_SHORT).show();
@@ -240,41 +235,41 @@ public class LocationHelper extends UZModule {
         public void onLocationChanged(AMapLocation location) {
             if (null != location) {
 
-                StringBuffer sb = new StringBuffer();
+                StringBuilder sb = new StringBuilder();
                 //errCode等于0代表定位成功，其他的为定位失败，具体的可以参照官网定位错误码说明
                 if (location.getErrorCode() == 0) {
                     sb.append("定位成功" + "\n");
-                    sb.append("定位类型: " + location.getLocationType() + "\n");
-                    sb.append("经    度    : " + location.getLongitude() + "\n");
-                    sb.append("纬    度    : " + location.getLatitude() + "\n");
-                    sb.append("精    度    : " + location.getAccuracy() + "米" + "\n");
-                    sb.append("提供者    : " + location.getProvider() + "\n");
+                    sb.append("定位类型: ").append(location.getLocationType()).append("\n");
+                    sb.append("经    度    : ").append(location.getLongitude()).append("\n");
+                    sb.append("纬    度    : ").append(location.getLatitude()).append("\n");
+                    sb.append("精    度    : ").append(location.getAccuracy()).append("米").append("\n");
+                    sb.append("提供者    : ").append(location.getProvider()).append("\n");
 
-                    sb.append("速    度    : " + location.getSpeed() + "米/秒" + "\n");
-                    sb.append("角    度    : " + location.getBearing() + "\n");
+                    sb.append("速    度    : ").append(location.getSpeed()).append("米/秒").append("\n");
+                    sb.append("角    度    : ").append(location.getBearing()).append("\n");
                     // 获取当前提供定位服务的卫星个数
-                    sb.append("星    数    : " + location.getSatellites() + "\n");
-                    sb.append("国    家    : " + location.getCountry() + "\n");
-                    sb.append("省            : " + location.getProvince() + "\n");
-                    sb.append("市            : " + location.getCity() + "\n");
-                    sb.append("城市编码 : " + location.getCityCode() + "\n");
-                    sb.append("区            : " + location.getDistrict() + "\n");
-                    sb.append("区域 码   : " + location.getAdCode() + "\n");
-                    sb.append("地    址    : " + location.getAddress() + "\n");
-                    sb.append("兴趣点    : " + location.getPoiName() + "\n");
+                    sb.append("星    数    : ").append(location.getSatellites()).append("\n");
+                    sb.append("国    家    : ").append(location.getCountry()).append("\n");
+                    sb.append("省            : ").append(location.getProvince()).append("\n");
+                    sb.append("市            : ").append(location.getCity()).append("\n");
+                    sb.append("城市编码 : ").append(location.getCityCode()).append("\n");
+                    sb.append("区            : ").append(location.getDistrict()).append("\n");
+                    sb.append("区域 码   : ").append(location.getAdCode()).append("\n");
+                    sb.append("地    址    : ").append(location.getAddress()).append("\n");
+                    sb.append("兴趣点    : ").append(location.getPoiName()).append("\n");
                     //定位完成的时间
                 } else {
                     //定位失败
                     sb.append("定位失败" + "\n");
-                    sb.append("错误码:" + location.getErrorCode() + "\n");
-                    sb.append("错误信息:" + location.getErrorInfo() + "\n");
-                    sb.append("错误描述:" + location.getLocationDetail() + "\n");
+                    sb.append("错误码:").append(location.getErrorCode()).append("\n");
+                    sb.append("错误信息:").append(location.getErrorInfo()).append("\n");
+                    sb.append("错误描述:").append(location.getLocationDetail()).append("\n");
                 }
                 sb.append("***定位质量报告***").append("\n");
                 sb.append("* WIFI开关：").append(location.getLocationQualityReport().isWifiAble() ? "开启" : "关闭").append("\n");
                 sb.append("* GPS星数：").append(location.getLocationQualityReport().getGPSSatellites()).append("\n");
-                sb.append("* 网络类型：" + location.getLocationQualityReport().getNetworkType()).append("\n");
-                sb.append("* 网络耗时：" + location.getLocationQualityReport().getNetUseTime()).append("\n");
+                sb.append("* 网络类型：").append(location.getLocationQualityReport().getNetworkType()).append("\n");
+                sb.append("* 网络耗时：").append(location.getLocationQualityReport().getNetUseTime()).append("\n");
                 sb.append("****************").append("\n");
 
                 //解析定位结果
