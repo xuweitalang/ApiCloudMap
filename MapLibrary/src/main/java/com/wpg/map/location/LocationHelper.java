@@ -4,7 +4,13 @@ import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Build;
+import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -12,14 +18,11 @@ import com.amap.api.location.AMapLocation;
 import com.amap.api.location.AMapLocationClient;
 import com.amap.api.location.AMapLocationClientOption;
 import com.amap.api.location.AMapLocationListener;
-import com.baidu.location.BDAbstractLocationListener;
-import com.baidu.location.BDLocation;
-import com.baidu.location.LocationClient;
-import com.baidu.location.LocationClientOption;
 import com.google.gson.Gson;
 import com.uzmap.pkg.uzcore.UZWebView;
 import com.uzmap.pkg.uzcore.uzmodule.UZModule;
 import com.uzmap.pkg.uzcore.uzmodule.UZModuleContext;
+import com.xdandroid.hellodaemon.DaemonEnv;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -33,13 +36,13 @@ public class LocationHelper extends UZModule {
     private static final String TAG = "LocationHelper";
     private static final String TYPE_BD = "'bmap";
     private static final String TYPE_GD = "amap";
-    public LocationClient mBDLocationClient = null;
-    private final BDAbstractLocationListener myBDListener = new MyLocationListener();
+    //    public LocationClient mBDLocationClient = null;
+//    private final BDAbstractLocationListener myBDListener = new MyLocationListener();
     private UZModuleContext mJsCallback;
 
     public LocationHelper(UZWebView webView) {
         super(webView);
-        requestLocationPermission();
+//        requestLocationPermission();
     }
 
     public void jsmethod_startTestActivity(final UZModuleContext moduleContext) {
@@ -50,13 +53,23 @@ public class LocationHelper extends UZModule {
                 Toast.makeText(context(), "权限已开启", Toast.LENGTH_SHORT).show();
             }
         }
+
+        DaemonEnv.startServiceMayBind(GPSService.class);
+
     }
 
     /**
      * 获取定位权限
      */
     private void requestLocationPermission() {
-
+        Toast.makeText(context(), "申请权限", Toast.LENGTH_SHORT).show();
+        LocationManager locationManager = (LocationManager)
+                context().getApplicationContext().getSystemService(Context.LOCATION_SERVICE);
+        if (ActivityCompat.checkSelfPermission(context(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(context(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, new MyLocationListener());
+        } else {
+            Toast.makeText(context(), "权限没打开", Toast.LENGTH_SHORT).show();
+        }
     }
 
     public void jsmethod_init(final UZModuleContext moduleContext) {
@@ -67,7 +80,7 @@ public class LocationHelper extends UZModule {
         if (TYPE_GD.equals(type)) {
             initGDMap(context());
         } else {
-            initBDMap(context());
+//            initBDMap(context());
         }
     }
 
@@ -79,7 +92,7 @@ public class LocationHelper extends UZModule {
     public void jsmethod_initBD(final UZModuleContext moduleContext) {
         //获取前端传过来的地图类型：假设0为百度地图，1为高德地图
         mJsCallback = moduleContext;
-        initBDMap(context());
+//        initBDMap(context());
     }
 
     /**
@@ -98,7 +111,7 @@ public class LocationHelper extends UZModule {
      *
      * @param context
      */
-    public void initBDMap(Context context) {
+    /*public void initBDMap(Context context) {
 
         //声明LocationClient类
         mBDLocationClient = new LocationClient(context.getApplicationContext());
@@ -132,7 +145,7 @@ public class LocationHelper extends UZModule {
         //可选，默认false，设置是否需要过滤GPS仿真结果，默认需要
         option.setEnableSimulateGps(false);
         mBDLocationClient.setLocOption(option);
-    }
+    }*/
 
     /**
      * 初始化高德地图
@@ -173,11 +186,14 @@ public class LocationHelper extends UZModule {
     }
 
 
-    /**
-     * 百度定位监听
-     * 实现定位监听 位置一旦有所改变就会调用这个方法
-     * 可以在这个方法里面获取到定位之后获取到的一系列数据
+    /*
      */
+/**
+ * 百度定位监听
+ * 实现定位监听 位置一旦有所改变就会调用这个方法
+ * 可以在这个方法里面获取到定位之后获取到的一系列数据
+ *//*
+
     public class MyLocationListener extends BDAbstractLocationListener {
 
         @Override
@@ -226,6 +242,7 @@ public class LocationHelper extends UZModule {
             }
         }
     }
+*/
 
     /**
      * 高德定位监听
@@ -287,8 +304,6 @@ public class LocationHelper extends UZModule {
                         e.printStackTrace();
                     }
                 }
-
-
             } else {
                 Log.d(TAG, "onLocationChanged: 定位失败，loc is null");
                 if (mJsCallback != null) {
@@ -303,9 +318,34 @@ public class LocationHelper extends UZModule {
         }
     };
 
+    class MyLocationListener implements LocationListener {
+
+        @Override
+        public void onLocationChanged(@NonNull Location location) {
+            Toast.makeText(context(), "altitude = " + location.getAltitude() + ",longitude = " + location.getLongitude(), Toast.LENGTH_SHORT).show();
+        }
+
+        @Override
+        public void onStatusChanged(String provider, int status, Bundle extras) {
+            Toast.makeText(context(), "onStatusChanged：provider = " + provider, Toast.LENGTH_SHORT).show();
+        }
+
+        @Override
+        public void onProviderEnabled(@NonNull String provider) {
+            Toast.makeText(context(), "onProviderEnabled：provider = " + provider, Toast.LENGTH_SHORT).show();
+        }
+
+        @Override
+        public void onProviderDisabled(@NonNull String provider) {
+            Toast.makeText(context(), "onProviderDisabled：provider = " + provider, Toast.LENGTH_SHORT).show();
+
+        }
+    }
+
 
     @Override
     protected void onClean() {
+        GPSService.stopService();
         if (null != mJsCallback) {
             mJsCallback = null;
         }

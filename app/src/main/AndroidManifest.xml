@@ -30,7 +30,7 @@
     <!--用于申请调用A-GPS模块-->
     <uses-permission android:name="android.permission.ACCESS_LOCATION_EXTRA_COMMANDS" />
     <application
-        android:name="com.uzmap.pkg.uzapp.UZApplication"
+        android:name="com.wpg.map.MyApplication"
         android:allowBackup="false"
         android:hardwareAccelerated="true"
         android:icon="@drawable/uz_icon"
@@ -46,11 +46,6 @@
         <meta-data
             android:name="com.baidu.lbsapi.API_KEY"
             android:value="PiWcZprvA8ITWO3nFh4go0aKtUuRsgSY" />
-
-        <!--高德地图key-->
-        <meta-data
-            android:name="com.amap.api.v2.apikey"
-            android:value="a36384cef315ecf7ac75982e65dc7bf0" />
 
         <activity
             android:name="com.uzmap.pkg.LauncherUI"
@@ -85,7 +80,15 @@
             android:enabled="true"
             android:process=":remote" />
 
+
+        <!--高德地图key-->
+        <meta-data
+            android:name="com.amap.api.v2.apikey"
+            android:value="a36384cef315ecf7ac75982e65dc7bf0" />
+
         <service android:name="com.amap.api.location.APSService" />
+
+        <service android:name="com.wpg.map.location.GPSService" />
     </application>
 
 </manifest>

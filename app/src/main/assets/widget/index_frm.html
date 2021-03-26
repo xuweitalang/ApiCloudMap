@@ -24,7 +24,7 @@
 		apiready = function(){
 	    	uzmoduledemo = api.require('moduleDemo');
 	    	scrollPicture = api.require('scrollPicture');
-	    	mapModule = api.require('mapModule');
+	    	MapLibrary = api.require('MapLibrary');
 	    }
 	    
 		function showAlert(){
@@ -155,19 +155,19 @@
 		}
 
 		function testLocation() {
-		    mapModule.init();
+		    MapLibrary.init();
 		}
 
 		function bdLocation() {
-		    mapModule.initBD();
+		    MapLibrary.initBD();
 		}
 
 		function gdLocation() {
-		    mapModule.initGD();
+		    MapLibrary.initGD();
 		}
 
 		function startTestActivity() {
-		    mapModule.startTestActivity();
+		    MapLibrary.startTestActivity();
 		}
 
 

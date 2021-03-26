@@ -1,7 +1,7 @@
 {
   "modules": [
     {
-      "name": "mapModule",
+      "name": "MapLibrary",
       "class": "com.wpg.map.location.LocationHelper"
     },
     {
