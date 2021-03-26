@@ -89,6 +89,13 @@
         <service android:name="com.amap.api.location.APSService" />
 
         <service android:name="com.wpg.map.location.GPSService" />
+
+
+        <receiver android:name="com.wpg.map.location.WLWakefulReceiver">
+            <intent-filter>
+                <action android:name="startlocation" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>
