@@ -11,6 +11,7 @@ import android.os.PowerManager;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
+import android.util.Log;
 
 
 import java.util.List;
@@ -21,6 +22,7 @@ import java.util.List;
  * @description:
  **/
 public class KeepLiveUtils {
+    private static final String TAG = "KeepLiveUtils";
 
     /**
      * 判断我们的应用是否在白名单中（防止系统休眠时，杀死我们自己的应用）
@@ -78,7 +80,8 @@ public class KeepLiveUtils {
         } else if (isXiaomi() || isRedMi()) {
             goXiaomiSetting(context);
         } else if (isOPPO()) {
-            goOPPOSetting(context);
+//            goOPPOSetting(context);
+            gotoAppDetail(context);
         } else if (isVIVO()) {
             goVIVOSetting(context);
         } else if (isMeizu()) {
@@ -89,6 +92,8 @@ public class KeepLiveUtils {
             goSmartisanSetting(context);
         } else if (isLeTV()) {
             goLetvSetting(context);
+        } else {
+            gotoAppDetail(context);
         }
     }
 
@@ -104,22 +109,18 @@ public class KeepLiveUtils {
     }
 
     public static void goHuaweiSetting(Context context) {
-//        try {
-//            showActivity(context, "com.huawei.systemmanager",
-//                    "com.huawei.systemmanager.startupmgr.ui.StartupNormalAppListActivity");
-//        } catch (Exception e) {
-//            showActivity(context, "com.huawei.systemmanager",
-//                    "com.huawei.systemmanager.optimize.bootstart.BootStartActivity");
-//        }
-
-        Intent intent = new Intent(context.getPackageName());
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        ComponentName comp = new ComponentName("com.huawei.systemmanager", "com.huawei.systemmanager.startupmgr.ui.StartupNormalAppListActivity");
-        intent.setComponent(comp);
+        try {
+            Intent intent = new Intent(context.getPackageName());
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            ComponentName comp = new ComponentName("com.huawei.systemmanager", "com.huawei.systemmanager.startupmgr.ui.StartupNormalAppListActivity");
+            intent.setComponent(comp);
 //        检测是否有能接受该Intent的Activity存在
-        List<ResolveInfo> resolveInfos = context.getPackageManager().queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY);
-        if (resolveInfos.size() > 0) {
-            context.startActivity(intent);
+            List<ResolveInfo> resolveInfos = context.getPackageManager().queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY);
+            if (resolveInfos.size() > 0) {
+                context.startActivity(intent);
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "goHuaweiSetting: " + e.getLocalizedMessage());
         }
     }
 
@@ -131,18 +132,21 @@ public class KeepLiveUtils {
     }
 
     public static void goXiaomiSetting(Context context) {
-        Intent intent = new Intent(context.getPackageName());
-        ComponentName componentName = new ComponentName("com.miui.powerkeeper", "com.miui.powerkeeper.ui.HiddenAppsConfigActivity");
-        intent.setComponent(componentName);
-        intent.putExtra("package_name", context.getPackageName());
-        intent.putExtra("package_label", context.getResources().getString(R.string.app_name));
-        //检测是否有能接受该Intent的Activity存在
-        List<ResolveInfo> resolveInfos = context.getPackageManager().queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY);
-        if (resolveInfos.size() > 0) {
-            context.startActivity(intent);
+        try {
+            Intent intent = new Intent(context.getPackageName());
+            ComponentName componentName = new ComponentName("com.miui.powerkeeper", "com.miui.powerkeeper.ui.HiddenAppsConfigActivity");
+            intent.setComponent(componentName);
+            intent.putExtra("package_name", context.getPackageName());
+            intent.putExtra("package_label", context.getResources().getString(R.string.app_name));
+            //检测是否有能接受该Intent的Activity存在
+            List<ResolveInfo> resolveInfos = context.getPackageManager().queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY);
+            if (resolveInfos.size() > 0) {
+                context.startActivity(intent);
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "goXiaomiSetting: " + e.getLocalizedMessage());
         }
-//        showActivity(context, "com.miui.securitycenter",
-//                "com.miui.permcenter.autostart.AutoStartManagementActivity");
+
     }
 
     /**
@@ -176,7 +180,14 @@ public class KeepLiveUtils {
     }
 
     public static void goVIVOSetting(Context context) {
-        showActivity(context, "com.iqoo.secure");
+        try {
+            Intent intent = new Intent();
+            intent.setComponent(new ComponentName("com.iqoo.powersaving", "com.iqoo.powersaving.PowerSavingManagerActivity"));
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            context.startActivity(intent);
+        } catch (Exception e) {
+            Log.e(TAG, "goVIVOSetting: " + e.getLocalizedMessage());
+        }
     }
 
     /**
@@ -235,4 +246,16 @@ public class KeepLiveUtils {
         return Build.BRAND != null && Build.BRAND.toLowerCase().equals("redmi");
     }
 
+    /**
+     * 进入应用信息页面
+     *
+     * @param context
+     */
+    public static void gotoAppDetail(Context context) {
+        Intent localIntent = new Intent();
+        localIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        localIntent.setAction("android.settings.APPLICATION_DETAILS_SETTINGS");
+        localIntent.setData(Uri.fromParts("package", context.getPackageName(), null));
+        context.startActivity(localIntent);
+    }
 }
