@@ -1,10 +1,12 @@
 package com.wpg.map;
 
 
+import android.os.Handler;
 import android.util.Log;
 
 import com.uzmap.pkg.uzapp.UZApplication;
 import com.wpg.map.location.GPSService;
+import com.wpg.setting.KeepLiveUtils;
 //import com.xdandroid.hellodaemon.DaemonEnv;
 
 /**
@@ -14,6 +16,7 @@ import com.wpg.map.location.GPSService;
  */
 public class MyApplication extends UZApplication {
     private static final String TAG = "MyApplication";
+
     @Override
     public void onCreate() {
         super.onCreate();

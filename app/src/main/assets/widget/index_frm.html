@@ -16,15 +16,19 @@
     	}
 
 
+
+
     </style>
     <script type="text/javascript">
 	    
 		var uzmoduledemo = null;
 		var scrollPicture = null;
+		var setting = null;
 		apiready = function(){
 	    	uzmoduledemo = api.require('moduleDemo');
 	    	scrollPicture = api.require('scrollPicture');
 	    	MapLibrary = api.require('MapLibrary');
+	    	setting = api.require('setting');
 	    }
 	    
 		function showAlert(){
@@ -170,6 +174,10 @@
 		    MapLibrary.startTestActivity();
 		}
 
+        function startSetting() {
+            setting.startSettingActivity();
+        }
+
 
 
 
@@ -225,6 +233,7 @@
         <div class="clickbtn" tapmode="active" onclick="bdLocation()">百度定位</div>
         <div class="clickbtn" tapmode="active" onclick="gdLocation()">高德定位</div>
         <div class="clickbtn" tapmode="active" onclick="testLocation()">定位</div>
+        <div class="clickbtn" tapmode="active" onclick="startSetting()">跳转</div>
         <br>
     </div>
 </div>

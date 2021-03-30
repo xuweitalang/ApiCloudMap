@@ -5,8 +5,8 @@
       "class": "com.wpg.map.location.LocationHelper"
     },
     {
-      "name": "mapDelegate",
-      "class": "com.wpg.map.location.MapDelegate"
+      "name": "setting",
+      "class": "com.wpg.setting.SettingHelper"
     }
   ]
 }
